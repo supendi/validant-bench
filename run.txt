@@ -1,5 +1,6 @@
 # Test with different data sizes
 
+// NESTED ARRAY
 // raw
 node --max-old-space-size=4096 benchmark-arr.js
 node --max-old-space-size=4096 benchmark-arr.js --records=2000 --depth=5
