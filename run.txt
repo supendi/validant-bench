@@ -1,0 +1,15 @@
+# Test with different data sizes
+
+// raw
+node --max-old-space-size=4096 benchmark-arr.js
+node --max-old-space-size=4096 benchmark-arr.js --records=2000 --depth=5
+
+ // mem test
+node --max-old-space-size=4096 --inspect-brk benchmark-arr.js
+
+for (const task of bench.tasks) {
+        const hz = task.result?.hz?.toFixed(2).padStart(6) || "n/a";
+        console.log(`${task.name}: ${hz} ops/sec`);
+}
+
+// console.table(bench.table());

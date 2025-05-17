@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "fastest-validator": "^1.19.1",
+    "joi": "^17.13.3",
+    "superstruct": "^2.0.2",
+    "tinybench": "^4.0.1",
+    "validant": "^0.0.45",
+    "yup": "^1.6.1",
+    "zod": "^3.24.4"
+  }
+}
