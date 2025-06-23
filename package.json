@@ -1,4 +1,10 @@
 {
+  "scripts": {
+    "benchmark": "node validation-benchmark.js",
+    "benchmark:async": "node async-validation-benchmark.js",
+    "benchmark:insurance": "node insurance-claim-benchmark.js",
+    "benchmark:all": "npm run benchmark && npm run benchmark:async && npm run benchmark:insurance"
+  },
   "dependencies": {
     "benchmark": "^2.1.4",
     "fastest-validator": "^1.19.1",

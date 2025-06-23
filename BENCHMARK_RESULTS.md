@@ -117,4 +117,42 @@ All libraries now perform **equivalent validation work**:
 - Results show operations per second with margin of error
 - Environment: Node.js v22.16.0 on Windows 10
 
+## 🏥 Insurance Claim Validation (Async)
+
+**Description:** Complex, real-world insurance claim processing with async external service validation
+**Data:** Comprehensive insurance claim with policy holder, claimant, vehicle, incident, and damage details
+
+**Key Features:**
+- **Async External Services:** SSN validation, VIN lookup, policy status verification
+- **Complex Nested Objects:** 5+ levels of nested validation
+- **Business Rules:** Age limits, policy date validation, damage cost constraints
+- **Real-World Complexity:** Simulates actual insurance industry data structures
+
+| Library | Performance | Relative Speed | Notes |
+|---------|-------------|----------------|-------|
+| 🥇 **yup** | **42 ±2.86% ops/sec** | **Baseline (100%)** | Excellent async handling |
+| 🥈 **zod** | **41 ±3.29% ops/sec** | **98%** | Strong TypeScript integration |
+| 🥉 **joi** | **16 ±2.52% ops/sec** | **38%** | Flexible but slower with complex async |
+| validant | 13 ±3.15% ops/sec | 31% | Good consistency, slower async performance |
+
+### Async Validation Insights
+
+**Performance Characteristics:**
+- **Lower Overall Throughput:** Async validation inherently slower due to I/O simulation
+- **Network Dependency:** Real-world performance varies with external service response times
+- **Complexity Impact:** Deep object nesting + async validation creates significant overhead
+
+**Library-Specific Observations:**
+- **yup**: Best async performance with clean `.test()` method integration
+- **zod**: Excellent TypeScript support with `.refine()` async validation
+- **joi**: Flexible `.external()` validation but performance penalty with complex schemas
+- **validant**: Consistent results but async validation needs optimization
+
+**Real-World Factors:**
+- External service latency (10-15ms simulated per async call)
+- Multiple async validations per claim (SSN, VIN, policy status)
+- Complex business rule validation alongside async checks
+
+This benchmark represents enterprise-level validation complexity commonly found in insurance, healthcare, and financial services applications.
+
 **Last Updated:** January 2025 
