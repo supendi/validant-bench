@@ -1,7 +1,7 @@
 const { Bench } = require("tinybench");
 const { z } = require("zod");
 const Joi = require("joi");
-const { Validator, required, minNumber, maxNumber, stringMinLen, stringMaxLen, emailAddress, elementOf, regularExpression } = require("validant");
+const { Validator, AsyncValidator, required, minNumber, maxNumber, stringMinLen, stringMaxLen, emailAddress, elementOf, regularExpression } = require("validant");
 const yup = require("yup");
 const { string, number, integer, array, object, boolean, size, min, max, assert, pattern, enums } = require("superstruct");
 const FastestValidator = require("fastest-validator");

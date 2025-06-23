@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "benchmark": "^2.1.4",
     "fastest-validator": "^1.19.1",
     "joi": "^17.13.3",
     "superstruct": "^2.0.2",
