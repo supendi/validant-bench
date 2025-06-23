@@ -52,7 +52,7 @@ const asyncServices = {
         // Simple Luhn algorithm check
         const digits = cardNumber.replace(/\D/g, '');
         if (digits.length !== 16) return false;
-        
+
         let sum = 0;
         for (let i = digits.length - 1; i >= 0; i--) {
             let digit = parseInt(digits[i]);
@@ -73,7 +73,7 @@ const asyncServices = {
 // Scenario 1: User Registration with Async Checks
 const userRegistrationData = {
     username: "newuser2024",
-    email: "newuser@company.com", 
+    email: "newuser@company.com",
     password: "SecurePass123!",
     confirmPassword: "SecurePass123!",
     age: 28,
@@ -190,10 +190,10 @@ const joiAsyncSchemas = {
             .external(async (email) => {
                 const exists = await asyncServices.checkEmailExists(email);
                 if (exists) throw new Error("Email already exists");
-                
+
                 const validDomain = await asyncServices.validateCompanyDomain(email);
                 if (!validDomain) throw new Error("Must use company email domain");
-                
+
                 return email;
             }),
         password: Joi.string().min(8).max(100).required(),
@@ -263,7 +263,7 @@ const joiAsyncSchemas = {
 const yupAsyncSchemas = {
     userRegistration: yup.object({
         username: yup.string().min(3).max(20).required()
-            .test('username-available', 'Username is already taken', 
+            .test('username-available', 'Username is already taken',
                 async (username) => await asyncServices.checkUsernameAvailable(username)),
         email: yup.string().email().required()
             .test('email-unique', 'Email already exists',
@@ -511,11 +511,11 @@ const validantAsyncSchemas = {
         users: {
             arrayElementRule: {
                 id: [required()],
-                        username: [
-            required(),
-            stringMinLen(3),
-            stringMaxLen(20),
-            async (username) => {
+                username: [
+                    required(),
+                    stringMinLen(3),
+                    stringMaxLen(20),
+                    async (username) => {
                         const available = await asyncServices.checkUsernameAvailable(username);
                         if (!available) {
                             return {
@@ -642,23 +642,23 @@ const validationFunctions = {
         userRegistration: async (data) => {
             try {
                 assert(data, superstructAsyncSchemas.userRegistration);
-                
+
                 // Manual async validations
                 const usernameCheck = await asyncValidators.usernameAvailable(data.username);
                 if (usernameCheck !== true) return false;
-                
+
                 const emailCheck = await asyncValidators.emailUnique(data.email);
                 if (emailCheck !== true) return false;
-                
+
                 const domainCheck = await asyncValidators.companyDomain(data.email);
                 if (domainCheck !== true) return false;
-                
+
                 const ipCheck = await asyncValidators.ipNotBlocked(data.ipAddress);
                 if (ipCheck !== true) return false;
-                
+
                 if (data.password !== data.confirmPassword) return false;
                 if (data.acceptTerms !== true) return false;
-                
+
                 return true;
             } catch (error) {
                 return false;
@@ -667,16 +667,16 @@ const validationFunctions = {
         payment: async (data) => {
             try {
                 assert(data, superstructAsyncSchemas.payment);
-                
+
                 const cardCheck = await asyncValidators.cardValid(data.cardNumber);
                 if (cardCheck !== true) return false;
-                
+
                 const domainCheck = await asyncValidators.companyDomain(data.merchantEmail);
                 if (domainCheck !== true) return false;
-                
+
                 const ipCheck = await asyncValidators.ipNotBlocked(data.customerIP);
                 if (ipCheck !== true) return false;
-                
+
                 return true;
             } catch (error) {
                 return false;
@@ -685,16 +685,16 @@ const validationFunctions = {
         bulkUsers: async (data) => {
             try {
                 assert(data, superstructAsyncSchemas.bulkUsers);
-                
+
                 // Check each user's async validations
                 for (const user of data) {
                     const usernameCheck = await asyncValidators.usernameAvailable(user.username);
                     if (usernameCheck !== true) return false;
-                    
+
                     const emailCheck = await asyncValidators.emailUnique(user.email);
                     if (emailCheck !== true) return false;
                 }
-                
+
                 return true;
             } catch (error) {
                 return false;
@@ -748,9 +748,9 @@ async function runAsyncBenchmarks() {
     console.log('- yup (with async test methods)');
     console.log('- superstruct (with manual async checks)');
     console.log('- validant (with AsyncValidator)\n');
-    
+
     console.log('Note: fastest-validator excluded (no native async support)\n');
-    console.log('=' .repeat(80));
+    console.log('='.repeat(80));
 
     const scenarios = [
         {
@@ -760,7 +760,7 @@ async function runAsyncBenchmarks() {
             key: 'userRegistration'
         },
         {
-            name: 'Payment Processing (Async)', 
+            name: 'Payment Processing (Async)',
             description: 'Credit card validation + Merchant domain + IP blacklist check',
             data: paymentData,
             key: 'payment'
@@ -781,7 +781,7 @@ async function runAsyncBenchmarks() {
         // Test that all validations work first
         console.log('\n🧪 Testing validation functions...');
         const libraries = ['zod', 'joi', 'yup', 'superstruct', 'validant'];
-        
+
         for (const lib of libraries) {
             try {
                 const result = await validationFunctions[lib][scenario.key](scenario.data);
@@ -795,12 +795,12 @@ async function runAsyncBenchmarks() {
 
         // Create benchmark suite
         const suite = new Benchmark.Suite();
-        
+
         // Add async benchmark tests
         for (const lib of libraries) {
             suite.add(lib, {
                 defer: true,
-                fn: async function(deferred) {
+                fn: async function (deferred) {
                     try {
                         await validationFunctions[lib][scenario.key](scenario.data);
                         deferred.resolve();
@@ -814,22 +814,22 @@ async function runAsyncBenchmarks() {
         // Run the benchmark
         await new Promise((resolve) => {
             suite
-                .on('cycle', function(event) {
+                .on('cycle', function (event) {
                     const benchmark = event.target;
                     const opsPerSec = benchmark.hz;
                     const rme = benchmark.stats.rme;
                     const samples = benchmark.stats.sample.length;
-                    
+
                     console.log(`${benchmark.name.padEnd(12)} | ${opsPerSec.toLocaleString('en-US', {
                         minimumFractionDigits: 0,
                         maximumFractionDigits: 0
                     }).padStart(8)} ops/sec | ±${rme.toFixed(2)}% | ${samples} samples`);
                 })
-                .on('complete', function() {
+                .on('complete', function () {
                     const fastest = this.filter('fastest')[0];
                     const slowest = this.filter('slowest')[0];
                     const speedup = (fastest.hz / slowest.hz).toFixed(1);
-                    
+
                     console.log(`\n🏆 Winner: ${fastest.name} (${speedup}x faster than slowest)`);
                     resolve();
                 })
@@ -844,7 +844,7 @@ async function runAsyncBenchmarks() {
     console.log('• Libraries with built-in async support generally perform better');
     console.log('• Manual async validation (superstruct) adds overhead');
     console.log('• Real-world performance will vary based on actual API response times');
-    console.log('=' .repeat(80));
+    console.log('='.repeat(80));
 }
 
 // Run the benchmarks
