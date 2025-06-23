@@ -3,7 +3,7 @@ const { z } = require("zod");
 const Joi = require("joi");
 const { Validator, required, minNumber, maxNumber, stringMinLen, stringMaxLen, emailAddress, elementOf, regularExpression } = require("validant");
 const yup = require("yup");
-const { string, number, array, object, boolean, size, min, max, assert, pattern, enums } = require("superstruct");
+const { string, number, integer, array, object, boolean, size, min, max, assert, pattern, enums } = require("superstruct");
 const FastestValidator = require("fastest-validator");
 
 console.log("🚀 Comprehensive Validation Library Benchmark");
@@ -30,8 +30,8 @@ const userSchemas = {
     zod: z.object({
         username: z.string().min(3).max(20),
         email: z.string().email(),
-        password: z.string().min(8),
-        age: z.number().min(13).max(120),
+        password: z.string().min(8).max(100),
+        age: z.number().int().min(13).max(120),
         firstName: z.string().min(1).max(50),
         lastName: z.string().min(1).max(50),
         acceptTerms: z.boolean(),
@@ -41,7 +41,7 @@ const userSchemas = {
     joi: Joi.object({
         username: Joi.string().min(3).max(20).required(),
         email: Joi.string().email().required(),
-        password: Joi.string().min(8).required(),
+        password: Joi.string().min(8).max(100).required(),
         age: Joi.number().integer().min(13).max(120).required(),
         firstName: Joi.string().min(1).max(50).required(),
         lastName: Joi.string().min(1).max(50).required(),
@@ -52,7 +52,7 @@ const userSchemas = {
     validant: {
         username: [required(), stringMinLen(3), stringMaxLen(20)],
         email: [required(), emailAddress()],
-        password: [required(), stringMinLen(8)],
+        password: [required(), stringMinLen(8), stringMaxLen(100)],
         age: [required(), minNumber(13), maxNumber(120)],
         firstName: [required(), stringMinLen(1), stringMaxLen(50)],
         lastName: [required(), stringMinLen(1), stringMaxLen(50)],
@@ -63,7 +63,7 @@ const userSchemas = {
     yup: yup.object({
         username: yup.string().min(3).max(20).required(),
         email: yup.string().email().required(),
-        password: yup.string().min(8).required(),
+        password: yup.string().min(8).max(100).required(),
         age: yup.number().integer().min(13).max(120).required(),
         firstName: yup.string().min(1).max(50).required(),
         lastName: yup.string().min(1).max(50).required(),
@@ -75,7 +75,7 @@ const userSchemas = {
         username: size(string(), 3, 20),
         email: pattern(string(), /^[^\s@]+@[^\s@]+\.[^\s@]+$/),
         password: size(string(), 8, 100),
-        age: min(max(number(), 120), 13),
+        age: min(max(integer(), 120), 13),
         firstName: size(string(), 1, 50),
         lastName: size(string(), 1, 50),
         acceptTerms: boolean(),
@@ -85,7 +85,7 @@ const userSchemas = {
     "fastest-validator": new FastestValidator().compile({
         username: { type: "string", min: 3, max: 20 },
         email: { type: "email" },
-        password: { type: "string", min: 8 },
+        password: { type: "string", min: 8, max: 100 },
         age: { type: "number", integer: true, min: 13, max: 120 },
         firstName: { type: "string", min: 1, max: 50 },
         lastName: { type: "string", min: 1, max: 50 },
@@ -275,13 +275,17 @@ const bulkSchemas = {
         priority: Joi.number().integer().min(1).max(5).required()
     })),
 
-    validant: [{
-        id: [required()],
-        value: [required()],
-        category: [required(), elementOf(["A", "B", "C", "D"])],
-        active: [required()],
-        priority: [required(), minNumber(1), maxNumber(5)]
-    }],
+    validant: {
+        data: {
+            arrayElementRule: {
+                id: [required()],
+                value: [required()],
+                category: [required(), elementOf(["A", "B", "C", "D"])],
+                active: [required()],
+                priority: [required(), minNumber(1), maxNumber(5)]
+            }
+        }
+    },
 
     yup: yup.array().of(yup.object({
         id: yup.string().required(),
@@ -296,10 +300,11 @@ const bulkSchemas = {
         value: number(),
         category: enums(["A", "B", "C", "D"]),
         active: boolean(),
-        priority: min(max(number(), 5), 1)
+        priority: min(max(integer(), 5), 1)
     })),
 
     "fastest-validator": new FastestValidator().compile({
+        $$root: true,
         type: "array",
         items: {
             type: "object",
@@ -328,12 +333,12 @@ function validateWith(library, schema, data) {
                 if (result.error) throw result.error;
                 return result.value;
             case "validant":
-                if (Array.isArray(schema)) {
-                    const validator = new Validator(schema[0]);
-                    for (const item of data) {
-                        const result = validator.validate(item);
-                        if (!result.isValid) throw new Error(result.message);
-                    }
+                if (Array.isArray(data)) {
+                    const validator = new Validator(schema);
+                    const result = validator.validate({
+                        data: data
+                    });
+                    if (!result.isValid) throw new Error(result.message);
                     return data;
                 } else {
                     const validator = new Validator(schema);
@@ -401,7 +406,7 @@ async function runBenchmark(name, schemas, data, description) {
             validateWith(lib, schemas[lib], data);
         });
     });
- 
+
     await bench.run();
 
     console.log("\n📊 Performance Results:");
@@ -440,7 +445,7 @@ async function runBenchmark(name, schemas, data, description) {
             bulkSchemas,
             bulkData,
             "Array of 50 objects - simulates batch processing scenarios"
-        ); 
+        );
 
     } catch (error) {
         console.error("❌ Benchmark failed:", error);
