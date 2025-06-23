@@ -160,7 +160,7 @@ const zodAsyncSchemas = {
 
     bulkUsers: z.array(z.object({
         id: z.string(),
-        username: z.string().min(3)
+        username: z.string().min(3).max(20)
             .refine(async (username) => await asyncServices.checkUsernameAvailable(username), {
                 message: "Username taken"
             }),
@@ -237,7 +237,7 @@ const joiAsyncSchemas = {
     bulkUsers: Joi.array().items(
         Joi.object({
             id: Joi.string().required(),
-            username: Joi.string().min(3).required()
+            username: Joi.string().min(3).max(20).required()
                 .external(async (username) => {
                     const available = await asyncServices.checkUsernameAvailable(username);
                     if (!available) throw new Error("Username taken");
@@ -300,7 +300,7 @@ const yupAsyncSchemas = {
     bulkUsers: yup.array().of(
         yup.object({
             id: yup.string().required(),
-            username: yup.string().min(3).required()
+            username: yup.string().min(3).max(20).required()
                 .test('username-available', 'Username taken',
                     async (username) => await asyncServices.checkUsernameAvailable(username)),
             email: yup.string().email().required()
@@ -365,7 +365,7 @@ const superstructAsyncSchemas = {
 
     bulkUsers: array(object({
         id: string(),
-        username: size(string(), 3, 50),
+        username: size(string(), 3, 20),
         email: pattern(string(), /^[^\s@]+@[^\s@]+\.[^\s@]+$/),
         department: enums(["IT", "HR", "Finance", "Marketing"]),
         role: enums(["admin", "user", "viewer"]),
@@ -511,10 +511,11 @@ const validantAsyncSchemas = {
         users: {
             arrayElementRule: {
                 id: [required()],
-                username: [
-                    required(),
-                    stringMinLen(3),
-                    async (username) => {
+                        username: [
+            required(),
+            stringMinLen(3),
+            stringMaxLen(20),
+            async (username) => {
                         const available = await asyncServices.checkUsernameAvailable(username);
                         if (!available) {
                             return {
