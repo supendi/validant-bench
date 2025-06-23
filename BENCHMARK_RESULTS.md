@@ -4,11 +4,11 @@
 This benchmark compares 6 popular JavaScript validation libraries across 3 realistic scenarios with **equivalent validation rules** to ensure fair comparison.
 
 **Libraries Tested:**
-- `fastest-validator` v1.19.0
+- `fastest-validator` v1.19.1
 - `zod` v3.25.67  
 - `joi` v17.13.3
-- `validant` v0.11.0
-- `yup` v1.6.0
+- `validant` v0.1.7
+- `yup` v1.6.1
 - `superstruct` v2.0.2
 
 **Test Environment:**
