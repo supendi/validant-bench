@@ -3,7 +3,8 @@
     "benchmark": "node validation-benchmark.js",
     "benchmark:async": "node async-validation-benchmark.js",
     "benchmark:insurance": "node insurance-claim-benchmark.js",
-    "benchmark:all": "npm run benchmark && npm run benchmark:async && npm run benchmark:insurance"
+    "benchmark:simple": "node simple-person-benchmark.js",
+    "benchmark:all": "npm run benchmark && npm run benchmark:async && npm run benchmark:insurance && npm run benchmark:simple"
   },
   "dependencies": {
     "benchmark": "^2.1.4",

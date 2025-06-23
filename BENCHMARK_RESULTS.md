@@ -218,6 +218,38 @@ validant v0.1.8 establishes itself as the premier choice for applications requir
 
 This benchmark represents enterprise-level validation complexity commonly found in insurance, healthcare, and financial services applications.
 
+## 🎯 Simple Person Validation (Minimal Overhead)
+
+**Description:** Absolute minimum validation scenario - single field with required rule only
+**Data:** `{ name: "John Doe" }` with only required validation
+
+### Valid Data Performance
+| Library | Performance | Relative Speed |
+|---------|-------------|----------------|
+| 🥇 **fastest-validator** | **10,286,805 ±0.06% ops/sec** | **Baseline (100%)** |
+| 🥈 **validant** | **4,845,904 ±1.45% ops/sec** | **47%** 🚀 |
+| 🥉 **zod** | **3,663,774 ±2.03% ops/sec** | **36%** |
+| joi | 1,370,978 ±1.20% ops/sec | 13% |
+| superstruct | 1,225,261 ±1.97% ops/sec | 12% |
+| yup | 503,315 ±1.81% ops/sec | 5% |
+
+### Error Handling Performance
+| Library | Performance | Relative Speed |
+|---------|-------------|----------------|
+| 🥇 **joi** | **401,741 ±0.74% ops/sec** | **Baseline (100%)** |
+| 🥈 **validant** | **121,085 ±0.27% ops/sec** | **30%** 🔥 |
+| 🥉 **fastest-validator** | **113,825 ±0.21% ops/sec** | **28%** |
+| zod | 81,280 ±1.25% ops/sec | 20% |
+| yup | 22,342 ±0.40% ops/sec | 6% |
+
+### Key Insights - Pure Performance
+- **validant achieves 47% of fastest-validator's speed** - exceptional for the complexity it offers
+- **Strong error handling** - 2nd place in validation failure scenarios
+- **Low variance** - excellent consistency in both success and failure cases
+- **Pure overhead baseline** - shows minimum cost per validation operation
+
+---
+
 ## 📈 Summary of validant v0.1.8 Improvements
 
 **🏆 New Benchmark Winners:**
