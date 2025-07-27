@@ -79,9 +79,9 @@ function validateWith(library, schema, data) {
                 if (result.error) throw result.error;
                 return result.value;
             case "validant":
-                const validator = new Validator(schema);
-                const validationResult = validator.validate(data);
-                if (!validationResult.isValid) throw new Error(validationResult.message);
+                const validator = new Validator();
+                const validantResult = validator.validate(data, schema);
+                if (!validantResult.isValid) throw new Error(validantResult.message);
                 return data;
             case "yup":
                 return schema.validateSync(data);
@@ -170,7 +170,7 @@ async function runBenchmark(testName, data, description, expectFailure = false) 
     const fastest = bench.tasks.sort((a, b) => b.result.hz - a.result.hz)[0];
     const slowest = bench.tasks.sort((a, b) => a.result.hz - b.result.hz)[0];
     const speedDifference = (fastest.result.hz / slowest.result.hz).toFixed(1);
-    
+
     console.log(`\n🏆 Winner: ${fastest.name} (${speedDifference}x faster than slowest)`);
 }
 

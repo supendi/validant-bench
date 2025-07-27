@@ -329,20 +329,20 @@ function validateWith(library, schema, data) {
             case "zod":
                 return schema.parse(data);
             case "joi":
-                const result = schema.validate(data);
-                if (result.error) throw result.error;
-                return result.value;
+                const joiResult = schema.validate(data);
+                if (joiResult.error) throw joiResult.error;
+                return joiResult.value;
             case "validant":
                 if (Array.isArray(data)) {
-                    const validator = new Validator(schema);
+                    const validator = new Validator();
                     const result = validator.validate({
                         data: data
-                    });
+                    }, schema);
                     if (!result.isValid) throw new Error(result.message);
                     return data;
                 } else {
-                    const validator = new Validator(schema);
-                    const result = validator.validate(data);
+                    const validator = new Validator();
+                    const result = validator.validate(data, schema);
                     if (!result.isValid) throw new Error(result.message);
                     return data;
                 }

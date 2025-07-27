@@ -706,8 +706,8 @@ const validationFunctions = {
     validant: {
         userRegistration: async (data) => {
             try {
-                const validator = new AsyncValidator(validantAsyncSchemas.userRegistration);
-                const result = await validator.validateAsync(data);
+                const validator = new AsyncValidator();
+                const result = await validator.validateAsync(data, validantAsyncSchemas.userRegistration);
                 return result.isValid;
             } catch (error) {
                 return false;
@@ -715,8 +715,8 @@ const validationFunctions = {
         },
         payment: async (data) => {
             try {
-                const validator = new AsyncValidator(validantAsyncSchemas.payment);
-                const result = await validator.validateAsync(data);
+                const validator = new AsyncValidator();
+                const result = await validator.validateAsync(data, validantAsyncSchemas.payment);
                 return result.isValid;
             } catch (error) {
                 return false;
@@ -724,10 +724,10 @@ const validationFunctions = {
         },
         bulkUsers: async (data) => {
             try {
-                const validator = new AsyncValidator(validantAsyncSchemas.bulkUsers);
+                const validator = new AsyncValidator();
                 // Wrap the array data for validant
                 const wrappedData = { users: data };
-                const result = await validator.validateAsync(wrappedData);
+                const result = await validator.validateAsync(wrappedData, validantAsyncSchemas.bulkUsers);
                 return result.isValid;
             } catch (error) {
                 return false;

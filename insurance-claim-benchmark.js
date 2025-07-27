@@ -32,7 +32,7 @@ const { AsyncValidator, AsyncValidationRule, required, minNumber, maxNumber, ema
 const mockInsuranceServices = {
     // Mock SSN database
     validSSNs: new Set(['123-45-6789', '987-65-4321', '456-78-9012', '321-54-9876']),
-    
+
     // Mock VIN database with vehicle info
     validVINs: new Map([
         ['1HGBH41JXMN109186', { make: 'Honda', model: 'Civic', year: 2021 }],
@@ -40,7 +40,7 @@ const mockInsuranceServices = {
         ['WAUV78E25KN123456', { make: 'Audi', model: 'Q7', year: 2019 }],
         ['5NPE34AF2EH123456', { make: 'Hyundai', model: 'Sonata', year: 2014 }]
     ]),
-    
+
     // Mock policy status database
     activePolicies: new Map([
         ['POL-2024-001234', { isActive: true, hasOutstandingPremiums: false }],
@@ -180,7 +180,7 @@ const zodAsyncSchema = z.object({
     claimNumber: z.string()
         .regex(/^INS-\d{4}-\d{6}$/, "Claim number must follow format: INS-YEAR-XXXXXX"),
     claimType: z.enum(["AUTO_ACCIDENT", "THEFT", "VANDALISM", "NATURAL_DISASTER", "COMPREHENSIVE"]),
-    
+
     policyHolder: z.object({
         firstName: z.string().min(1).max(50),
         lastName: z.string().min(1).max(50),
@@ -215,7 +215,7 @@ const zodAsyncSchema = z.object({
             country: z.string().min(1)
         })
     }),
-    
+
     claimant: z.object({
         firstName: z.string().min(1),
         lastName: z.string().min(1),
@@ -234,7 +234,7 @@ const zodAsyncSchema = z.object({
             country: z.string().min(1)
         })
     }),
-    
+
     vehicle: z.object({
         vin: z.string()
             .refine(async (vin) => {
@@ -252,7 +252,7 @@ const zodAsyncSchema = z.object({
         safetyRating: z.number().min(1).max(5),
         antiTheftDevices: z.array(z.string()).optional()
     }),
-    
+
     incident: z.object({
         incidentDate: z.date(),
         incidentTime: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/),
@@ -268,7 +268,7 @@ const zodAsyncSchema = z.object({
             country: z.string().min(1)
         })
     }),
-    
+
     damages: z.array(z.object({
         component: z.string().min(1),
         severity: z.enum(["MINOR", "MODERATE", "SEVERE", "TOTAL_LOSS"]),
@@ -278,7 +278,7 @@ const zodAsyncSchema = z.object({
         laborHours: z.number().min(0).max(500),
         isPreExistingDamage: z.boolean().optional()
     })).min(1),
-    
+
     medicalClaims: z.array(z.any()).optional(),
     claimAmount: z.number().min(1),
     supportingDocuments: z.array(z.string()).min(1),
@@ -301,7 +301,7 @@ const zodAsyncSchema = z.object({
 const joiAsyncSchema = Joi.object({
     claimNumber: Joi.string().pattern(/^INS-\d{4}-\d{6}$/).required(),
     claimType: Joi.string().valid("AUTO_ACCIDENT", "THEFT", "VANDALISM", "NATURAL_DISASTER", "COMPREHENSIVE").required(),
-    
+
     policyHolder: Joi.object({
         firstName: Joi.string().min(1).max(50).required(),
         lastName: Joi.string().min(1).max(50).required(),
@@ -335,7 +335,7 @@ const joiAsyncSchema = Joi.object({
             country: Joi.string().required()
         }).required()
     }).required(),
-    
+
     claimant: Joi.object({
         firstName: Joi.string().required(),
         lastName: Joi.string().required(),
@@ -351,7 +351,7 @@ const joiAsyncSchema = Joi.object({
             country: Joi.string().required()
         }).required()
     }).required(),
-    
+
     vehicle: Joi.object({
         vin: Joi.string().required()
             .external(async (vin) => {
@@ -368,7 +368,7 @@ const joiAsyncSchema = Joi.object({
         safetyRating: Joi.number().min(1).max(5).required(),
         antiTheftDevices: Joi.array().items(Joi.string()).optional()
     }).required(),
-    
+
     incident: Joi.object({
         incidentDate: Joi.date().required(),
         incidentTime: Joi.string().pattern(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/).required(),
@@ -386,7 +386,7 @@ const joiAsyncSchema = Joi.object({
             country: Joi.string().required()
         }).required()
     }).required(),
-    
+
     damages: Joi.array().items(Joi.object({
         component: Joi.string().required(),
         severity: Joi.string().valid("MINOR", "MODERATE", "SEVERE", "TOTAL_LOSS").required(),
@@ -396,7 +396,7 @@ const joiAsyncSchema = Joi.object({
         laborHours: Joi.number().min(0).max(500).required(),
         isPreExistingDamage: Joi.boolean().optional()
     })).min(1).required(),
-    
+
     medicalClaims: Joi.array().items(Joi.any()).optional(),
     claimAmount: Joi.number().min(1).required(),
     supportingDocuments: Joi.array().items(Joi.string()).min(1).required(),
@@ -415,7 +415,7 @@ const yupAsyncSchema = yup.object({
         .matches(/^INS-\d{4}-\d{6}$/, "Invalid claim number format")
         .required(),
     claimType: yup.string().oneOf(["AUTO_ACCIDENT", "THEFT", "VANDALISM", "NATURAL_DISASTER", "COMPREHENSIVE"]).required(),
-    
+
     policyHolder: yup.object({
         firstName: yup.string().min(1).max(50).required(),
         lastName: yup.string().min(1).max(50).required(),
@@ -444,7 +444,7 @@ const yupAsyncSchema = yup.object({
             country: yup.string().required()
         }).required()
     }).required(),
-    
+
     claimant: yup.object({
         firstName: yup.string().required(),
         lastName: yup.string().required(),
@@ -460,7 +460,7 @@ const yupAsyncSchema = yup.object({
             country: yup.string().required()
         }).required()
     }).required(),
-    
+
     vehicle: yup.object({
         vin: yup.string().required()
             .test('vin-valid', 'Invalid VIN', async (vin) => {
@@ -476,7 +476,7 @@ const yupAsyncSchema = yup.object({
         safetyRating: yup.number().min(1).max(5).required(),
         antiTheftDevices: yup.array().of(yup.string())
     }).required(),
-    
+
     incident: yup.object({
         incidentDate: yup.date().required(),
         incidentTime: yup.string().matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/).required(),
@@ -494,7 +494,7 @@ const yupAsyncSchema = yup.object({
             country: yup.string().required()
         }).required()
     }).required(),
-    
+
     damages: yup.array().of(yup.object({
         component: yup.string().required(),
         severity: yup.string().oneOf(["MINOR", "MODERATE", "SEVERE", "TOTAL_LOSS"]).required(),
@@ -504,7 +504,7 @@ const yupAsyncSchema = yup.object({
         laborHours: yup.number().min(0).max(500).required(),
         isPreExistingDamage: yup.boolean()
     })).min(1).required(),
-    
+
     medicalClaims: yup.array(),
     claimAmount: yup.number().min(1).required(),
     supportingDocuments: yup.array().of(yup.string()).min(1).required(),
@@ -555,7 +555,7 @@ function validatePolicyActive() {
     return async function (policyNumber) {
         if (!policyNumber) return undefined;
         const status = await externalServices.validatePolicyStatus(policyNumber);
-        
+
         if (!status.isActive) {
             return {
                 ruleName: 'validatePolicyActive',
@@ -563,7 +563,7 @@ function validatePolicyActive() {
                 errorMessage: 'Policy is not active.'
             };
         }
-        
+
         if (status.hasOutstandingPremiums) {
             return {
                 ruleName: 'validatePolicyActive',
@@ -588,12 +588,12 @@ const validantAsyncSchema = {
             }
         }
     ],
-    
+
     claimType: [
         required('Claim type is required.'),
         elementOf(['AUTO_ACCIDENT', 'THEFT', 'VANDALISM', 'NATURAL_DISASTER', 'COMPREHENSIVE'], 'Invalid claim type.')
     ],
-    
+
     policyHolder: {
         firstName: [required(), isString(), stringMinLen(1), stringMaxLen(50)],
         lastName: [required(), isString(), stringMinLen(1), stringMaxLen(50)],
@@ -626,7 +626,7 @@ const validantAsyncSchema = {
             country: [required()]
         }
     },
-    
+
     claimant: {
         firstName: [required()],
         lastName: [required()],
@@ -642,7 +642,7 @@ const validantAsyncSchema = {
             country: [required()]
         }
     },
-    
+
     vehicle: {
         vin: [required(), validateVINNumber()],
         make: [required()],
@@ -657,7 +657,7 @@ const validantAsyncSchema = {
             arrayElementRule: []
         }
     },
-    
+
     incident: {
         incidentDate: [required()],
         incidentTime: [
@@ -700,7 +700,7 @@ const validantAsyncSchema = {
             country: [required()]
         }
     },
-    
+
     damages: {
         arrayRules: [arrayMinLen(1, 'At least one damage entry is required.')],
         arrayElementRule: {
@@ -716,7 +716,7 @@ const validantAsyncSchema = {
             isPreExistingDamage: []
         }
     },
-    
+
     medicalClaims: {
         arrayRules: [],
         arrayElementRule: {}
@@ -760,7 +760,7 @@ const validationFunctions = {
             return false;
         }
     },
-    
+
     joi: async (data) => {
         try {
             await joiAsyncSchema.validateAsync(data, { allowUnknown: true });
@@ -769,7 +769,7 @@ const validationFunctions = {
             return false;
         }
     },
-    
+
     yup: async (data) => {
         try {
             await yupAsyncSchema.validate(data);
@@ -778,11 +778,11 @@ const validationFunctions = {
             return false;
         }
     },
-    
+
     validant: async (data) => {
         try {
-            const validator = new AsyncValidator(validantAsyncSchema);
-            const result = await validator.validateAsync(data);
+            const validator = new AsyncValidator();
+            const result = await validator.validateAsync(data, validantAsyncSchema);
             return result.isValid;
         } catch (error) {
             return false;
